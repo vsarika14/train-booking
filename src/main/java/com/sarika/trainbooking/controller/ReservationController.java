@@ -33,7 +33,8 @@ public class ReservationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     ResponseEntity<ReservationResponse> createReservation(
-            @PathParam("customerid") Integer customerId, @RequestBody @Validated ReservationRequest reservationRequest) {
+            @PathParam("customerid") Integer customerId, @RequestBody @Validated ReservationRequest reservationRequest)
+            throws Exception {
         return new ResponseEntity<>(reservationService.reserve(customerId, reservationRequest),
                 HttpStatus.OK);
     }

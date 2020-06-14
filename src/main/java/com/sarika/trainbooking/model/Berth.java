@@ -1,6 +1,10 @@
 package com.sarika.trainbooking.model;
 
-import lombok.*;
+import com.sarika.trainbooking.enums.BerthType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,18 +17,10 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer implements Serializable {
+public class Berth implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
-    @NonNull
-    private String name;
-
-    @NonNull
-    private String email;
-
-    @NonNull
-    private String password;
-
+    private BerthType berthType;
+    private Integer count;
 }
