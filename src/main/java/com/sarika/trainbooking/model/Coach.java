@@ -19,8 +19,8 @@ public class Coach implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+    @Column(name = "coach_type")
     private CoachType coachType;
-    private Double cost;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name="coach_berth", joinColumns={@JoinColumn(name="coach_id")}, inverseJoinColumns=@JoinColumn(name="berth_id"))

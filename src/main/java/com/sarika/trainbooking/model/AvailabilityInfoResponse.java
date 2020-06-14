@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TravellerFare {
-    private String name;
-    private Double amountBeforeDiscount;
-    private Integer discountPercentageIfAny;
-    private Double totalAmount;
+public class AvailabilityInfoResponse {
+    private String coachType;
+    private String berthType;
+    private Integer count;
 }

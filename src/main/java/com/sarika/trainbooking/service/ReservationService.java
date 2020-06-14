@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ReservationService implements IReservationService {
@@ -23,30 +22,67 @@ public class ReservationService implements IReservationService {
     TrainRepository trainRepository;
 
     @Override
+    public List<AvailabilityInfoResponse> checkAvailability(int trainId) throws Exception {
+
+        List<BerthAvailability> berthAvailabilities = berthRepository.getAvailability(trainId);
+        List<AvailabilityInfoResponse> resultInfo = new ArrayList<>();
+
+        for (BerthAvailability b : berthAvailabilities) {
+            resultInfo.add(AvailabilityInfoResponse.builder()
+                    .berthType(b.getBerthType())
+                    .coachType(b.getCoachType()).count(b.getCount())
+                    .build());
+        }
+
+        return resultInfo;
+    }
+
+    @Override
     @Transactional
     public ReservationResponse reserve(Integer customerId, ReservationRequest reservationRequest) throws Exception {
-        //authenticate customer
-        //validate reservation request
-        //create order
+        //TODO: authenticate customer
+        //TODO: validate reservation request
+
         // step1: get berth availability for a date
 
         List<BerthAvailability> berthAvailabilities = berthRepository.getAvailability(
-                reservationRequest.getTrainId(), reservationRequest.getTravelDate());
+                reservationRequest.getTrainId());// reservationRequest.getTravelDate()
 
         // step2: do matching based on travellers preference
+        // step3a: if not matched return error
+        // step3b: if matched then update berth availability for that date
 
         matchAndUpdate(reservationRequest.getTravellers(), berthAvailabilities);
 
-        // step3a: if not matched return error
-
-
-        // step3b: if matched then update berth availability for that date
-
-
         // step4: compute the cost and create reservation
+        ReservationResponse response = computeCost(reservationRequest);
 
+        return response;
+    }
 
-        return ReservationResponse.builder().build();
+    private ReservationResponse computeCost(ReservationRequest reservationRequest) {
+        List<TravellerFare> travellerFares = new ArrayList<>();
+        Double totalAmount= Double.valueOf(0);
+        for (Traveller traveller : reservationRequest.getTravellers()) {
+            Double cost = trainRepository.getCost(reservationRequest.getTrainId(),
+                    traveller.getPreference().getCoachType().toString()).getCost();
+            int discountPercentage = getDiscountPercentage(traveller.getAge());
+            Double discountedFare = cost-(cost*discountPercentage/100);
+            travellerFares.add(TravellerFare.builder()
+                    .name(traveller.getName())
+                    .amountBeforeDiscount(cost)
+                    .discountPercentageIfAny(discountPercentage)
+                    .totalAmount(discountedFare)
+                    .build());
+            totalAmount+=discountedFare;
+        }
+        return ReservationResponse.builder().travellerFares(travellerFares).totalAmount(totalAmount).build();
+    }
+
+    private int getDiscountPercentage(Integer age) {
+        if(age<12 || age>60)
+            return 10;
+        return 0;
     }
 
     private void matchAndUpdate(List<Traveller> travellers, List<BerthAvailability> berthAvailabilities) throws Exception {
@@ -55,20 +91,17 @@ public class ReservationService implements IReservationService {
 
         for (Traveller traveller : travellers) {
 
-            Integer count=preferenceTable.get(traveller.getPreference().getCoachType(),
+            Integer count = preferenceTable.get(traveller.getPreference().getCoachType(),
                     traveller.getPreference().getBerthType());
-            if(count!=null)
-            {
+            if (count != null) {
                 preferenceTable.put(traveller.getPreference().getCoachType(),
                         traveller.getPreference().getBerthType(),
-                        count+1);
-            }
-            else {
+                        count + 1);
+            } else {
                 preferenceTable.put(traveller.getPreference().getCoachType(),
                         traveller.getPreference().getBerthType(),
                         1);
             }
-
 
         }
 
@@ -76,15 +109,13 @@ public class ReservationService implements IReservationService {
 
         for (BerthAvailability berthAvailability : berthAvailabilities) {
 
-            Integer count=availabilityTable.get(berthAvailability.getCoachType(),
+            Integer count = availabilityTable.get(berthAvailability.getCoachType(),
                     berthAvailability.getBerthType());
-            if(count!=null)
-            {
+            if (count != null) {
                 availabilityTable.put(berthAvailability.getCoachType(),
                         berthAvailability.getBerthType(),
-                        count+1);
-            }
-            else {
+                        count + 1);
+            } else {
                 availabilityTable.put(berthAvailability.getCoachType(),
                         berthAvailability.getBerthType(),
                         berthAvailability.getCount());
@@ -92,19 +123,17 @@ public class ReservationService implements IReservationService {
         }
 
         for (Table.Cell cell : preferenceTable.cellSet()) {
-            if((Integer)cell.getValue() > (Integer)availabilityTable.get(cell.getRowKey()+"",cell.getColumnKey()+""))
-            {
+            if ((Integer) cell.getValue() > (Integer) availabilityTable.get(cell.getRowKey() + "", cell.getColumnKey() + "")) {
                 throw new Exception("no match");
             }
         }
 
         for (Table.Cell cell : preferenceTable.cellSet()) {
-            Optional<BerthAvailability> berthAvailabilityOptional = berthAvailabilities.stream().filter(x->
-                    x.getCoachType().equals(cell.getRowKey()+"")&&x.getBerthType().equals(cell.getColumnKey()+"")).findFirst();
-            if(berthAvailabilityOptional.isPresent())
-            {
-                BerthAvailability b= berthAvailabilityOptional.get();
-                b.setCount(b.getCount()-1);
+            Optional<BerthAvailability> berthAvailabilityOptional = berthAvailabilities.stream().filter(x ->
+                    x.getCoachType().equals(cell.getRowKey() + "") && x.getBerthType().equals(cell.getColumnKey() + "")).findFirst();
+            if (berthAvailabilityOptional.isPresent()) {
+                BerthAvailability b = berthAvailabilityOptional.get();
+                b.setCount(b.getCount() - (Integer)cell.getValue());
             }
         }
 

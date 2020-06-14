@@ -15,7 +15,7 @@ public class BerthRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<BerthAvailability> getAvailability(Integer trainId, Date travelDate)
+    public List<BerthAvailability> getAvailability(int trainId) //, Date travelDate)
     {
         return entityManager.createQuery("SELECT bi FROM BerthAvailability bi WHERE bi.trainId = :trainId"
                 ,BerthAvailability.class)

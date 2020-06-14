@@ -26,5 +26,10 @@ public class TrainCoach implements Serializable {
     private Integer coachId;
     @Column(name = "coach_count")
     private Integer coachCount;
+    @Column(name = "coach_type")
+    private String coachType;
+
+    private Double cost;
+
 
 }

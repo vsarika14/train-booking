@@ -1,5 +1,6 @@
 package com.sarika.trainbooking.controller;
 
+import com.sarika.trainbooking.model.AvailabilityInfoResponse;
 import com.sarika.trainbooking.model.ReservationRequest;
 import com.sarika.trainbooking.model.ReservationResponse;
 import com.sarika.trainbooking.service.IReservationService;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -25,6 +27,13 @@ public class ReservationController {
     ResponseEntity<String> info() {
         log.info("Inside info...");
         return new ResponseEntity<>("Welcome to Sarika's IRCTC", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/trains/{trainid}/check-availability",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AvailabilityInfoResponse>> getDetails(@PathVariable("trainid") int trainId) throws Exception {
+        return new ResponseEntity<List<AvailabilityInfoResponse>>(reservationService.checkAvailability(trainId),
+                HttpStatus.OK);
     }
 
     @PostMapping(
