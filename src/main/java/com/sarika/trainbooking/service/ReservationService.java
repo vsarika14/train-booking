@@ -6,6 +6,7 @@ import com.sarika.trainbooking.enums.BerthType;
 import com.sarika.trainbooking.enums.CoachType;
 import com.sarika.trainbooking.model.*;
 import com.sarika.trainbooking.repository.BerthRepository;
+import com.sarika.trainbooking.repository.ReservationRepository;
 import com.sarika.trainbooking.repository.TrainRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ import java.util.*;
 public class ReservationService implements IReservationService {
     @Autowired
     BerthRepository berthRepository;
+
+    @Autowired
+    ReservationRepository reservationRepository;
 
     @Autowired
     TrainRepository trainRepository;
@@ -38,6 +42,19 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
+    public PNRInfoResponse getReservationDetails(int pnr) throws Exception{
+
+        Reservation reservation = reservationRepository.find(pnr);
+
+
+        return PNRInfoResponse.builder().trainId(reservation.getTrain().getId())
+                .travelDate(reservation.getTravelDate())
+                .bookingDetails(reservation.getBookingDetails())
+                .build();
+    }
+
+
+    @Override
     @Transactional
     public ReservationResponse reserve(Integer customerId, ReservationRequest reservationRequest) throws Exception {
         //TODO: authenticate customer
@@ -57,6 +74,7 @@ public class ReservationService implements IReservationService {
         // step4: compute the cost and create reservation
         ReservationResponse response = computeCost(reservationRequest);
 
+
         return response;
     }
 
@@ -64,7 +82,7 @@ public class ReservationService implements IReservationService {
         List<TravellerFare> travellerFares = new ArrayList<>();
         Double totalAmount= Double.valueOf(0);
         for (Traveller traveller : reservationRequest.getTravellers()) {
-            Double cost = trainRepository.getCost(reservationRequest.getTrainId(),
+            Double cost = trainRepository.getCostByTrainAndCoachType(reservationRequest.getTrainId(),
                     traveller.getPreference().getCoachType().toString()).getCost();
             int discountPercentage = getDiscountPercentage(traveller.getAge());
             Double discountedFare = cost-(cost*discountPercentage/100);

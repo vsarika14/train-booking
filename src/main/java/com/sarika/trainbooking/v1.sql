@@ -1,11 +1,11 @@
 Customer
+Passenger
 
 Train
 ->id,name,src,dest,listOfStops
-->Coach: id, type, cost
-->Berth: id, type , count
+->Coach: train_id, coach_id, type, coach_count, cost
+->Berth: id, type, berth_count
 coach_berth: coach_id, berth_id
-train_coach: train_id, coach_id, coach_count
 
 
 reservation

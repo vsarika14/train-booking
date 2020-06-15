@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer implements Serializable {
+public class Passenger implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -28,10 +28,5 @@ public class Customer implements Serializable {
     @NonNull
     private Integer age;
 
-    @NonNull
-    private String email;
-
-    @NonNull
-    private String password;
-
 }
+

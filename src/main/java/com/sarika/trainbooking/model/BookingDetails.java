@@ -5,11 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity(name = "BookingDetails")
 @Table(name = "booking_details")
@@ -18,14 +16,23 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDetails implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
     @Column(name = "coach_id")
     private Integer coachId;
     @Column(name = "berth_id")
     private Integer berthId;
     private String status;
-    @Id
-    @Column(name = "traveller_id")
-    private Integer travellerId;
-    @Id
     private Integer pnr;
+
+    @ManyToOne
+    @JoinColumn(name = "passenger_id")
+    private Passenger passenger;
+
+//    @Id
+//    @Column(name = "traveller_id")
+//    private Integer travellerId;
+
 }

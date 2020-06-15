@@ -1,6 +1,7 @@
 package com.sarika.trainbooking.controller;
 
 import com.sarika.trainbooking.model.AvailabilityInfoResponse;
+import com.sarika.trainbooking.model.PNRInfoResponse;
 import com.sarika.trainbooking.model.ReservationRequest;
 import com.sarika.trainbooking.model.ReservationResponse;
 import com.sarika.trainbooking.service.IReservationService;
@@ -35,6 +36,14 @@ public class ReservationController {
         return new ResponseEntity<List<AvailabilityInfoResponse>>(reservationService.checkAvailability(trainId),
                 HttpStatus.OK);
     }
+
+    @GetMapping(value = "/reservations/{pnr}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PNRInfoResponse> getReservationDetails(@PathVariable("pnr") int pnr) throws Exception {
+        return new ResponseEntity<PNRInfoResponse>(reservationService.getReservationDetails(pnr),
+                HttpStatus.OK);
+    }
+
 
     @PostMapping(
             value = "/customers/{customerid}/reserve",

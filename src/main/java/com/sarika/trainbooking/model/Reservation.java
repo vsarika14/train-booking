@@ -20,10 +20,7 @@ public class Reservation implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer pnr;
 
-    //    @Column(name = "train_id")
-    //    private Integer trainId;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "train_id")
     private Train train;
 

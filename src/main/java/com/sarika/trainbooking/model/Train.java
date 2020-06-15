@@ -23,9 +23,9 @@ public class Train implements Serializable {
     private String destination;
     private String stops;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="train_coach", joinColumns={@JoinColumn(name="train_id")}, inverseJoinColumns=@JoinColumn(name="coach_id"))
-    private List<Coach> coaches;
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(name="train_coach", joinColumns={@JoinColumn(name="train_id")}, inverseJoinColumns=@JoinColumn(name="coach_id"))
+//    private List<Coach1> coaches;
 //
 //    @OneToMany(cascade = CascadeType.ALL)
 //    @JoinColumns({@JoinColumn(name = "train_id")})

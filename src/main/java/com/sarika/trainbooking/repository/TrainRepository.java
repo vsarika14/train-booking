@@ -1,9 +1,7 @@
 package com.sarika.trainbooking.repository;
 
-import com.sarika.trainbooking.enums.CoachType;
-import com.sarika.trainbooking.model.BerthAvailability;
 import com.sarika.trainbooking.model.Train;
-import com.sarika.trainbooking.model.TrainCoach;
+import com.sarika.trainbooking.model.Coach;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -19,10 +17,10 @@ public class TrainRepository {
         return entityManager.find(Train.class, id);
     }
 
-    public TrainCoach getCost(int trainId, String coachType)
+    public Coach getCostByTrainAndCoachType(int trainId, String coachType)
     {
-        return entityManager.createQuery("SELECT tc FROM TrainCoach tc WHERE tc.trainId = :trainId " +
-                        "and tc.coachType=:coachType", TrainCoach.class)
+        return entityManager.createQuery("SELECT c FROM Coach c WHERE c.trainId = :trainId " +
+                        "and c.coachType=:coachType", Coach.class)
                 .setParameter("trainId", trainId)
                 .setParameter("coachType", coachType)
                 .getSingleResult();
