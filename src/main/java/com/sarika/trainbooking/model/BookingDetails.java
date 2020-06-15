@@ -1,5 +1,6 @@
 package com.sarika.trainbooking.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,14 +26,14 @@ public class BookingDetails implements Serializable {
     @Column(name = "berth_id")
     private Integer berthId;
     private String status;
-    private Integer pnr;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
 
-//    @Id
-//    @Column(name = "traveller_id")
-//    private Integer travellerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pnr", nullable = false)
+    @JsonIgnore
+    private Reservation reservation;
 
 }

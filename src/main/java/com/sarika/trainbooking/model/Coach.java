@@ -15,12 +15,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Coach implements Serializable {
-    @Id
-    @Column(name = "train_id")
-    private Integer trainId;
+
     @Id
     @Column(name = "coach_id")
     private Integer coachId;
+    @Id
+    @Column(name = "train_id")
+    private Integer trainId;
+
     @Column(name = "coach_count")
     private Integer coachCount;
     @Column(name = "coach_type")

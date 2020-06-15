@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PNRInfoResponse {
 
-    List<BookingDetails> bookingDetails;
+    List<BookingDetailsResponse> bookingDetails;
     Integer trainId;
     Date travelDate;
 }

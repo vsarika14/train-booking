@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,7 +32,6 @@ public class Reservation implements Serializable {
     @Column(name = "travel_date")
     private Date travelDate;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumns({@JoinColumn(name = "pnr")})
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BookingDetails> bookingDetails;
 }

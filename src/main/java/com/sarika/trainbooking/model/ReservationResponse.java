@@ -10,4 +10,6 @@ import java.util.List;
 public class ReservationResponse {
     List<TravellerFare> travellerFares;
     Double totalAmount;
+    int pnr;
+    String status;
 }

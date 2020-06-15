@@ -20,4 +20,8 @@ public class ReservationRepository {
         return entityManager.find(Reservation.class, pnr);
     }
 
+    public void save(Reservation reservation)
+    {
+        entityManager.persist(reservation);
+    }
 }
